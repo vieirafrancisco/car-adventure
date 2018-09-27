@@ -23,10 +23,10 @@ class App:
 
         self._running = True
         self._display_surf = None
-        self.size = self.weight, self.height = 450, 600
+        self.size = self.weight, self.height = 480, 640
 
         self.faixa = Objeto(10, self.height, (self.weight/2)-5, 0)
-        self.carro = Objeto(self.weight//4, (self.weight//4)+50, self.weight//8, (3*self.height//4)-25, os.path.join("image", "carro.png"))
+        self.carro = Objeto(80, 120, 80, self.height-120, os.path.join("image", "carro.png"))
         self.carro.scale_image()
 
         # Key event
@@ -62,9 +62,11 @@ class App:
                 self.on_event(event)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.car_key.key_left()
+                        if self.carro.pos_x - 40 >= 0:
+                            self.car_key.key_left()
                     if event.key == pygame.K_RIGHT:
-                        self.car_key.key_right()
+                        if self.carro.pos_x + 40 <= self.weight-80:
+                            self.car_key.key_right()
             self.on_loop()
             self.on_render()
         self.on_cleanup()
