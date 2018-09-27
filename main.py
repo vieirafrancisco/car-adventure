@@ -5,6 +5,7 @@ from pygame.locals import *
 
 from objeto import Objeto
 from key_events import KeyEvent
+from display import DisplaySurface
 
 cores = {
     "vermelho": (255,0,0),
@@ -23,19 +24,20 @@ class App:
 
         self._running = True
         self._display_surf = None
-        self.size = self.weight, self.height = 480, 640
+        self.size = self.width, self.height = 480, 640
 
-        self.faixa = Objeto(10, self.height, (self.weight/2)-5, 0)
+        self.faixa = Objeto(10, self.height, (self.width/2)-5, 0)
         self.carro = Objeto(80, 120, 80, self.height-120, os.path.join("image", "carro.png"))
         self.carro.scale_image()
 
         # Key event
-        self.car_key = KeyEvent(self.carro)
+        self.car_key = None
 
     def on_init(self):
         pygame.init()
-        self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+        self._display_surf = DisplaySurface(self.width, self.height)
         pygame.display.set_caption(self.title)
+        self.car_key = KeyEvent(self._display_surf, self.carro)
         self._running = True
 
     def on_event(self, event):
@@ -46,9 +48,9 @@ class App:
         pygame.display.update()
 
     def on_render(self):
-        self._display_surf.fill(cores["cinza"])
-        self.faixa.draw(self._display_surf, cores["branco"])
-        self._display_surf.blit(self.carro.get_image_surface(), self.carro.get_pos())
+        self._display_surf.get_display_surface().fill(cores["cinza"])
+        self.faixa.draw(self._display_surf.get_display_surface(), cores["branco"])
+        self._display_surf.get_display_surface().blit(self.carro.get_image_surface(), self.carro.get_pos())
 
     def on_cleanup(self):
         pygame.quit()
@@ -60,13 +62,18 @@ class App:
         while(self._running):
             for event in pygame.event.get():
                 self.on_event(event)
+
+                # Key press button
                 if event.type == pygame.KEYDOWN:
+
+                    # Left click button
                     if event.key == pygame.K_LEFT:
-                        if self.carro.pos_x - 40 >= 0:
-                            self.car_key.key_left()
+                        self.car_key.key_left()
+
+                    # Right click button
                     if event.key == pygame.K_RIGHT:
-                        if self.carro.pos_x + 40 <= self.weight-80:
-                            self.car_key.key_right()
+                        self.car_key.key_right()
+
             self.on_loop()
             self.on_render()
         self.on_cleanup()
