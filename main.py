@@ -1,9 +1,11 @@
 import os
+import random
 
 import pygame
 from pygame.locals import *
 
 from objeto import Objeto
+from carros import Player, Enemy
 from key_events import KeyEvent
 from display import DisplaySurface
 
@@ -27,8 +29,15 @@ class App:
         self.size = self.width, self.height = 480, 640
 
         self.faixa = Objeto(10, self.height, (self.width/2)-5, 0)
-        self.carro = Objeto(80, 120, 80, self.height-120, os.path.join("image", "carro.png"))
+        
+        # Player object
+        self.carro = Player(80, 120, 80, self.height-120, os.path.join("image", "carro.png"))
         self.carro.scale_image()
+        
+        # Enemy object
+        self.enemy = Enemy(80, 120, random.randint(0, self.width), 0, os.path.join("image", "inimigo.png"))
+        self.enemy.scale_image()
+        self.enemy.rotate_image(angle=180)
 
         # Key event
         self.car_key = None
@@ -51,6 +60,7 @@ class App:
         self._display_surf.get_display_surface().fill(cores["cinza"])
         self.faixa.draw(self._display_surf.get_display_surface(), cores["branco"])
         self._display_surf.get_display_surface().blit(self.carro.get_image_surface(), self.carro.get_pos())
+        self._display_surf.get_display_surface().blit(self.enemy.get_image_surface(), self.enemy.get_pos())
 
     def on_cleanup(self):
         pygame.quit()
