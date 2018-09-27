@@ -1,6 +1,6 @@
 import pygame
 
-class Objeto():
+class Objeto:
 	def __init__(self, largura, comprimento, pos_x, pos_y, image_url = None):
 		if image_url:
 			self.image_surface = pygame.image.load(image_url)
