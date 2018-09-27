@@ -4,11 +4,14 @@ import pygame
 from pygame.locals import *
 
 from objeto import Objeto
+from key_events import KeyEvent
 
 cores = {
     "vermelho": (255,0,0),
     "verde": (0, 255, 0),
-    "azul": (0,0,255)
+    "azul": (0,0,255),
+    "cinza": (168, 168, 168),
+    "branco": (255, 255, 255)
 }
 
 class App:
@@ -26,6 +29,9 @@ class App:
         self.carro = Objeto(self.weight//4, (self.weight//4)+50, self.weight//8, (3*self.height//4)-25, os.path.join("image", "carro.png"))
         self.carro.scale_image()
 
+        # Key event
+        self.car_key = KeyEvent(self.carro)
+
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
@@ -40,8 +46,8 @@ class App:
         pygame.display.update()
 
     def on_render(self):
-        self._display_surf.fill(cores["azul"])
-        self.faixa.draw(self._display_surf, cores["verde"])
+        self._display_surf.fill(cores["cinza"])
+        self.faixa.draw(self._display_surf, cores["branco"])
         self._display_surf.blit(self.carro.get_image_surface(), self.carro.get_pos())
 
     def on_cleanup(self):
@@ -56,7 +62,9 @@ class App:
                 self.on_event(event)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.carro.pos_x -= 10 
+                        self.car_key.key_left()
+                    if event.key == pygame.K_RIGHT:
+                        self.car_key.key_right()
             self.on_loop()
             self.on_render()
         self.on_cleanup()
