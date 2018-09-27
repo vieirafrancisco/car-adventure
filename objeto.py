@@ -8,11 +8,15 @@ class Objeto:
 		self.image_url = image_url
 		self.largura = largura
 		self.comprimento = comprimento
+		self.size = (self.largura, self.comprimento)
 		self.pos_x = pos_x
 		self.pos_y = pos_y
 
 	def scale_image(self):
-		self.image_surface = pygame.transform.scale(self.image_surface, (self.largura, self.comprimento))
+		self.image_surface = pygame.transform.scale(self.image_surface, self.size)
+
+	def rotate_image(self, angle):
+		self.image_surface = pygame.transform.rotate(self.image_surface, angle)
 
 	def draw(self, surface, cor):
 		pygame.draw.rect(surface, cor, self.get_pos()+self.get_size())
