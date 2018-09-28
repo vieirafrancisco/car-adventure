@@ -4,8 +4,8 @@ import random
 import pygame
 from pygame.locals import *
 
-from objeto import Objeto
-from carros import Player, Enemy
+from game_object import Object
+from cars import Player, Enemy
 from key_events import KeyEvent
 from display import DisplaySurface
 
@@ -17,25 +17,28 @@ cores = {
     "branco": (255, 255, 255)
 }
 
+# Objects size
+PLAYER_WIDTH = 80
+PLAYER_HEIGHT = 120
+
+ENEMY_WIDTH = 80
+ENEMY_HEIGHT = 120
+
 class App:
     def __init__(self, title=None):
-        if title:
-            self.title = title
-        else:
-            self.title = "New Game"
-
+        self.title = "New Game" if not title else title
         self._running = True
         self._display_surf = None
-        self.size = self.width, self.height = 480, 640
+        self.size = self.width, self.height = 400, 640
 
-        self.faixa = Objeto(10, self.height, (self.width/2)-5, 0)
+        self.faixa = Object(10, self.height, (self.width/2)-5, 0)
         
         # Player object
-        self.carro = Player(80, 120, 80, self.height-120, os.path.join("image", "carro.png"))
+        self.carro = Player(PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, self.height-PLAYER_HEIGHT, os.path.join("image", "carro.png"))
         self.carro.scale_image()
         
         # Enemy object
-        self.enemy = Enemy(80, 120, random.randint(0, self.width), 0, os.path.join("image", "inimigo.png"))
+        self.enemy = Enemy(ENEMY_WIDTH, ENEMY_HEIGHT, random.randint(0, self.width-ENEMY_WIDTH), -ENEMY_HEIGHT, os.path.join("image", "inimigo.png"))
         self.enemy.scale_image()
         self.enemy.rotate_image(angle=180)
 
@@ -66,12 +69,14 @@ class App:
         self._display_surf.get_display_surface().blit(self.enemy.get_image_surface(), self.enemy.get_pos())
         
         if(self.enemy.pos_y >= self.height):
-            self.enemy.pos_y = 0
+            self.enemy.pos_y = -self.enemy.height
             self.enemy.reset_position(range=self.width)
         else:
             self.enemy.pos_y += 10
 
-        self.clock.tick(30)
+        self.carro.collision(self.enemy)
+        # 30 FPS
+        self.clock.tick(30) 
 
     def on_cleanup(self):
         pygame.quit()
