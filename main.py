@@ -42,6 +42,9 @@ class App:
         # Key event
         self.car_key = None
 
+        # Clock
+        self.clock = pygame.time.Clock()
+
     def on_init(self):
         pygame.init()
         self._display_surf = DisplaySurface(self.width, self.height)
@@ -61,6 +64,14 @@ class App:
         self.faixa.draw(self._display_surf.get_display_surface(), cores["branco"])
         self._display_surf.get_display_surface().blit(self.carro.get_image_surface(), self.carro.get_pos())
         self._display_surf.get_display_surface().blit(self.enemy.get_image_surface(), self.enemy.get_pos())
+        
+        if(self.enemy.pos_y >= self.height):
+            self.enemy.pos_y = 0
+            self.enemy.reset_position(range=self.width)
+        else:
+            self.enemy.pos_y += 10
+
+        self.clock.tick(30)
 
     def on_cleanup(self):
         pygame.quit()
